@@ -25,10 +25,10 @@ class _ReadingState extends State<Reading> {
   @override
   initState() {
     super.initState();
-    refresh_itemlist(displaylist);
+    refresh_displaylist(displaylist);
   }
 
-  refresh_itemlist(Box<dynamic> displaylist){
+  refresh_displaylist(Box<dynamic> displaylist){
     final final_displaylist = displaylist.keys.map((key) {
       final value = displaylist.get(key);
       // return {"key": key, "no": value['no'], "date": value['date'], "time": value['time'], "sys": value["sys"], "dia": value['dia'], "mean": value['mean'], "pr": value['pr']};
@@ -46,6 +46,47 @@ class _ReadingState extends State<Reading> {
   Widget build(BuildContext context) {
 
     int last_index = displaylist.length - 1;
+    Map<String,dynamic> latest_reading = Current_DisplayList[last_index];
+    String latest_date = '0';
+    String latest_time = '0';
+    String latest_sys = '0';
+    String latest_dia = '0';
+    String latest_mean = '0';
+    String latest_pr = '0';
+    var sys = 0;
+    var dia = 0;
+
+    var reading = latest_reading.entries.map((e){
+      return e.value;
+    }).toList();
+
+    if (reading != null){
+      latest_date = reading[1].toString();
+      latest_time = reading[2].toString();
+      latest_sys = reading[3].toString();
+      latest_dia = reading[4].toString();
+      latest_mean = reading[5].toString();
+      latest_pr = reading[6].toString();
+      sys = int.parse(latest_sys);
+      dia = int.parse(latest_dia);
+    }
+
+    String level = '';
+    if(sys < 90 || dia < 60){
+    level = 'LOW';
+    }else if(sys < 120 && dia < 80){
+      level = 'NORMAL';
+    }else if(sys < 140 || dia < 90){
+      level = 'PREHYPERTENSION';
+    }else if(sys < 140 || dia < 89){
+      level = 'HYPERTENSION (Stage 1)';
+    }else if(sys > 140 || dia >= 90){
+      level = 'HYPERTENSION (Stage 2)';
+    }else if(sys > 180 || dia > 120){
+      level = 'HYPERTENSION (Emergency)';
+    }else{
+      level = '-------';
+    }
 
     return Scaffold(
       backgroundColor: Colors.blueGrey[800],
@@ -84,14 +125,14 @@ class _ReadingState extends State<Reading> {
               crossAxisAlignment: CrossAxisAlignment.start,
               // mainAxisAlignment: MainAxisAlignment.end,
               children: [
-                Text('Date: ',
+                Text('Date: ' + latest_date,
                   style: TextStyle(
                     color: Colors.grey,
                     letterSpacing: 1.0,
                     fontSize: 14.0,
                   ),
                 ),
-                Text('Time: ',
+                Text('Time: ' + latest_time,
                   style: TextStyle(
                     color: Colors.grey,
                     letterSpacing: 1.0,
@@ -100,7 +141,7 @@ class _ReadingState extends State<Reading> {
                 ),
               ],
             ),
-            SizedBox(height: 40.0),
+            SizedBox(height: 60.0),
             Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -109,7 +150,7 @@ class _ReadingState extends State<Reading> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'GOOD',
+                      level,
                       style: TextStyle(
                           color: Colors.white,
                           letterSpacing: 2.0,
@@ -129,25 +170,9 @@ class _ReadingState extends State<Reading> {
                 ),
                 SizedBox(height: 50.0),
                 Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
-                    Column(
-                      children: <Widget>[
-                        Container(
-                          child:
-                          CircleAvatar(
-                            radius: 60.0,
-                          ),
-                          // Image.asset(
-                          //   'assets/images/tiger.jfif',
-                          //   height: 200,
-                          //   width: 400,
-                          //   fit: BoxFit.fitWidth,
-                          // ),
-                        ),
-                        SizedBox(height: 50.0),
-                      ],
-                    ),
-                    SizedBox(width: 40.0),
                     Column(
                       children: <Widget>[
                         Row(
@@ -174,12 +199,12 @@ class _ReadingState extends State<Reading> {
                                 ),
                               ],
                             ),
-                            SizedBox(width: 20.0),
+                            SizedBox(width: 60.0),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  '80',
+                                  latest_sys,
                                   style: TextStyle(
                                     color: Colors.yellow[400],
                                     fontSize: 46.0,
@@ -216,12 +241,12 @@ class _ReadingState extends State<Reading> {
                                 ),
                               ],
                             ),
-                            SizedBox(width: 20.0),
+                            SizedBox(width: 60.0),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  '67',
+                                  latest_dia,
                                   style: TextStyle(
                                     color: Colors.yellow[400],
                                     fontSize: 46.0,
@@ -258,13 +283,13 @@ class _ReadingState extends State<Reading> {
                                 ),
                               ],
                             ),
-                            SizedBox(width: 20.0),
+                            SizedBox(width: 60.0),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  '34',
+                                  latest_pr,
                                   style: TextStyle(
                                     color: Colors.purple[200],
                                     letterSpacing: 2.0,
@@ -291,23 +316,15 @@ class _ReadingState extends State<Reading> {
                                     fontSize: 15.0,
                                   ),
                                 ),
-                                // Text(
-                                //   '/min ',
-                                //   style: TextStyle(
-                                //     color: Colors.grey[400],
-                                //     letterSpacing: 2.0,
-                                //     fontSize: 14.0,
-                                //   ),
-                                // ),
                               ],
                             ),
-                            SizedBox(width: 20.0),
+                            SizedBox(width: 60.0),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  '65',
+                                  latest_mean,
                                   style: TextStyle(
                                     color: Colors.purple[200],
                                     letterSpacing: 2.0,

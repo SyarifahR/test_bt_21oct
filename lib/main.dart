@@ -19,6 +19,7 @@ void main() async{
   await Hive.initFlutter();
   await Hive.openBox('boxB');
   await Hive.initFlutter();
+
   // await Hive.openBox('displaylist');
   // await Hive.initFlutter();
   // await Hive.openBox('itemlist');
